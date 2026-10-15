@@ -107,3 +107,16 @@ img{max-width:100%}
 .admin-login-inner>img{position:static;width:min(210px,58vw);height:105px;max-height:none;object-fit:contain;object-position:center;margin:0 auto 8px;flex:0 0 auto}
 .admin aside>img{height:95px;max-height:none;object-fit:contain;object-position:center}
 @media(max-width:430px){.admin-login-inner>img{width:min(185px,62vw);height:110px;max-height:none;margin-bottom:5px}.admin aside>img{height:55px}}
+
+
+/* Logo integrity: show the complete artwork, without clipping */
+.brand{flex:0 0 auto;min-width:0;overflow:visible;padding:2px 4px}
+.brand img,.site footer img,.admin aside>img,.admin-login-inner>img{display:block;object-fit:contain!important;object-position:center!important;overflow:visible;max-width:100%;background:transparent}
+.brand img{width:100%;height:100%;padding:2px}
+.site footer{overflow:visible;min-height:92px}
+.site footer img{flex:0 0 125px;width:125px;height:64px;padding:3px;object-fit:contain!important}
+.admin aside{overflow:visible}
+.admin aside>img{flex:0 0 auto;padding:4px;max-width:100%;margin-bottom:16px}
+.admin-login-inner>img{width:min(220px,62vw);height:96px;max-height:none;padding:4px;margin-bottom:2px}
+@media(max-width:760px){.site-header{overflow:visible}.brand{width:136px;height:58px}.site footer{gap:10px}.site footer img{flex-basis:112px;width:112px;height:58px}.admin aside{overflow-x:auto}.admin aside>img{max-width:100%}}
+@media(max-width:430px){.brand{width:128px;height:56px}.site footer img{flex-basis:108px;width:108px;height:56px}}
