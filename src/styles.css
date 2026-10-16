@@ -136,3 +136,101 @@ img{max-width:100%}
 
 /* Admin site settings and live contact details */
 .site-contact{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px 16px;color:#806b5e;font-size:.9rem;text-align:center}.site-contact a{text-decoration:underline;text-underline-offset:3px}.site-settings-form{display:grid;gap:14px}.site-settings-form>label{display:grid;gap:6px;font-weight:750;color:#654b3c}.site-settings-form input:not([type=file]),.site-settings-form textarea{width:100%;min-width:0;border:1px solid #ddcbbb;border-radius:10px;background:#fffdf9;padding:12px;color:#3a2117}.site-settings-form input[type=file]{display:block;width:100%;max-width:100%;padding:10px;border:1px dashed #cbb39d;border-radius:10px;background:#fffaf4}.site-settings-form .form-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.site-settings-form .form-two label{display:grid;gap:6px;font-weight:750;color:#654b3c}.site-settings-form .btn{justify-self:start;min-height:46px}.site-settings-form .btn:disabled{opacity:.65;cursor:wait}.settings-help{margin:0;color:#806b5e;font-size:.9rem;line-height:1.55}.settings-logo-preview{display:grid;place-items:center;min-height:130px;padding:18px;border:1px solid #eadfd2;border-radius:12px;background:#fffdf9}.settings-logo-preview img{display:block;width:min(100%,340px);height:auto;max-height:220px;object-fit:contain}.site-settings-form hr{width:100%;border:0;border-top:1px solid #eadfd2;margin:8px 0}.site-settings-form h2{margin:4px 0 0;font-family:Georgia,serif}@media(max-width:520px){.site-settings-form .form-two{grid-template-columns:minmax(0,1fr)}.site-contact{flex-direction:column;gap:6px}}
+
+
+/* Professional administration workspace: compact cards, editable menus, no overflow */
+.admin{grid-template-columns:224px minmax(0,1fr);min-width:0}
+.admin aside{position:sticky;top:0;height:100dvh;min-width:0;overflow-y:auto;overflow-x:hidden;padding:20px 14px;gap:6px}
+.admin-brand-row{display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:8px}
+.admin-brand-row>img{display:block;width:155px;height:92px;object-fit:contain}
+.admin-nav-label{font-size:10px;letter-spacing:.13em;font-weight:900;color:#a28a77;padding:8px 12px}
+.admin aside button{width:100%;min-width:0;white-space:normal;line-height:1.25;padding:12px 11px;gap:10px}
+.admin aside button svg{flex:0 0 auto}
+.admin aside button span{min-width:0;overflow-wrap:anywhere}
+.admin-nav-spacer{flex:1;min-height:18px}
+.admin-main{width:100%;min-width:0;overflow-x:clip;padding:clamp(16px,2.5vw,32px)}
+.admin-top{align-items:flex-start;min-width:0}
+.admin-heading{display:flex;align-items:flex-start;gap:12px;min-width:0}
+.admin-top h1{font-size:clamp(1.8rem,3vw,2.5rem);line-height:1.08;overflow-wrap:anywhere;margin:5px 0 22px}
+.admin-status{display:flex;align-items:center;gap:7px;max-width:45%;min-width:0;overflow-wrap:anywhere;text-align:right;font-size:.8rem}
+.admin-live-dot{display:block;flex:0 0 8px;width:8px;height:8px;border-radius:50%;background:#3f9a5b}
+.admin-nav-toggle{display:none;align-items:center;justify-content:center;flex:0 0 42px;width:42px;height:42px;border:1px solid #e7dbcf;border-radius:12px;background:#fffaf4;color:#583a2b}
+.admin-card{min-width:0;padding:clamp(13px,2vw,22px);overflow:hidden}
+.admin-card form label{min-width:0;display:grid;gap:6px}
+.admin-card input,.admin-card textarea,.admin-card select,.site-settings-form input,.site-settings-form textarea{max-width:100%;min-width:0}
+.menu-edit-grid,.menu-item-edit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.menu-edit-grid{padding:14px 0;border-top:1px solid #eadfd2;border-bottom:1px solid #eadfd2}
+.menu-edit-grid label,.menu-item-edit-grid label{display:grid;gap:6px;min-width:0;font-size:.82rem;font-weight:800;color:#755c4a}
+.menu-edit-grid input,.menu-edit-grid select,.menu-item-edit-grid input,.menu-item-edit-grid select,.menu-item-edit-grid textarea{width:100%;min-width:0;max-width:100%;border:1px solid #dfcdbc;border-radius:9px;background:#fff;padding:10px 11px;color:#3a2117;font-size:16px}
+.menu-card-heading{align-items:flex-start;margin-bottom:14px}
+.menu-card-heading>div{min-width:0}
+.menu-card-heading h2{overflow-wrap:anywhere;margin:4px 0 5px}
+.menu-card-heading .kicker{font-size:10px}
+.menu-item-editor-list{display:grid;gap:10px;margin:14px 0}
+.menu-item-editor{min-width:0;border:1px solid #e8dbcd;background:#fffdf9;border-radius:13px;padding:13px}
+.menu-item-editor-top{display:flex;justify-content:space-between;align-items:center;gap:8px;min-width:0;margin-bottom:11px}
+.menu-item-editor-top b{min-width:0;overflow-wrap:anywhere}
+.menu-item-edit-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.menu-item-description{grid-column:1/-1}
+.menu-item-save{margin-top:10px}
+.menu-admin-actions{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center}
+.menu-admin-actions .add-select{min-width:0;width:100%}
+.menu-admin-actions .btn,.menu-admin-actions .mini-btn{min-height:42px;white-space:normal}
+.menu-admin-actions .mini-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px}
+.admin-card .btn{max-width:100%}
+@media(max-width:1050px){
+ .admin{grid-template-columns:190px minmax(0,1fr)}
+ .admin aside{padding:15px 10px}
+ .admin-brand-row>img{width:130px}
+ .menu-admin-actions{grid-template-columns:minmax(0,1fr) minmax(0,auto)}
+ .menu-admin-actions .add-select{grid-column:1/-1}
+}
+@media(max-width:760px){
+ .admin{display:block;min-height:100dvh;padding-bottom:76px}
+ .admin aside{position:fixed;z-index:100;left:0;right:0;bottom:0;top:auto;width:100%;height:auto;max-height:none;padding:7px max(8px,env(safe-area-inset-left)) calc(7px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-right));display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;align-items:stretch;border-right:0;border-top:1px solid #e7dbcf;background:rgba(255,250,244,.97);backdrop-filter:blur(18px);box-shadow:0 -8px 30px #3b21170d;overflow:visible;white-space:normal}
+ .admin-brand-row,.admin-nav-label,.admin-nav-spacer{display:none}
+ .admin aside button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:0;width:100%;min-height:55px;padding:7px 3px;border-radius:10px;text-align:center;font-size:10px;font-weight:800;overflow-wrap:anywhere}
+ .admin aside button span{display:block;max-width:100%;font-size:10px;line-height:1.15;white-space:normal;overflow-wrap:anywhere}
+ .admin aside button svg{width:19px;height:19px}
+ .admin aside button.active{background:#f0e0cd;color:#8c481d}
+ .admin aside button:nth-last-child(2),.admin aside button.logout{display:none}
+ .admin-nav-toggle.admin-open-nav{display:none}
+ .admin-nav-toggle{display:none}
+ .admin-main{padding:15px 12px 24px;overflow:visible}
+ .admin-top{gap:8px;align-items:flex-start;margin-bottom:8px}
+ .admin-heading{gap:8px}
+ .admin-top h1{font-size:clamp(1.55rem,6vw,2rem);margin:3px 0 16px;letter-spacing:-.025em}
+ .admin-top .kicker{font-size:9px;letter-spacing:.1em}
+ .admin-status{font-size:11px;max-width:42%;padding-top:5px}
+ .notice{font-size:13px;overflow-wrap:anywhere}
+ .admin-card{border-radius:14px;padding:13px;margin-bottom:12px}
+ .card-head{align-items:flex-start;flex-wrap:wrap;gap:8px}
+ .card-head h2,.admin-card h2{font-size:1.2rem;overflow-wrap:anywhere}
+ .card-head>span{font-size:11px}
+ .inline-form{grid-template-columns:minmax(0,1fr);gap:10px}
+ .inline-form .btn{width:100%;justify-content:center}
+ .menu-edit-grid,.menu-item-edit-grid{grid-template-columns:minmax(0,1fr);gap:10px}
+ .menu-item-description{grid-column:auto}
+ .menu-admin-actions{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:7px}
+ .menu-admin-actions .add-select{grid-column:1/-1}
+ .menu-admin-actions .btn,.menu-admin-actions .mini-btn{width:100%;min-width:0;font-size:12px;padding:10px 8px}
+ .menu-item-editor{padding:10px}
+ .menu-item-editor-top b{font-size:13px}
+ .menu-item-editor-top .mini-btn{flex:0 0 auto}
+ .admin-card form>label{margin-bottom:12px}
+ .admin-card input,.admin-card textarea,.admin-card select{font-size:16px}
+ .table-scroll{border-radius:10px}
+ .admin-status .admin-live-dot{width:7px;height:7px;flex-basis:7px}
+ .dish-admin-row{grid-template-columns:42px minmax(0,1fr) 34px 34px;gap:6px}
+ .dish-admin-copy{overflow-wrap:anywhere}
+}
+@media(max-width:380px){
+ .admin-main{padding:12px 9px 20px}
+ .admin-top{flex-direction:column}
+ .admin-status{max-width:100%;padding:0}
+ .admin-card{padding:11px}
+ .menu-admin-actions{grid-template-columns:minmax(0,1fr)}
+ .menu-admin-actions .add-select{grid-column:auto}
+ .admin aside button{font-size:9px}
+ .admin aside button span{font-size:9px}
+}
