@@ -10,7 +10,7 @@ export default defineConfig({
    srcDir:'src',
    filename:'sw.js',
    registerType:'autoUpdate',
-   includeAssets:['brand/cana-logo.png'],
+   includeAssets:[],
    manifest:{
     name:'Les Délices de CANA',
     short_name:'CANA',
@@ -22,7 +22,7 @@ export default defineConfig({
     start_url:'/',
     scope:'/',
     icons:[
-      {src:'/brand/cana-logo.png',sizes:'1536x1024',type:'image/png',purpose:'any'}
+      {src:'/api/cana-logo',sizes:'any',type:'image/jpeg',purpose:'any'}
     ]
    },
    injectManifest:{globPatterns:['**/*.{js,css,html,svg,png,webp,woff2}']}
