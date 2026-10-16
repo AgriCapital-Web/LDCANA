@@ -33,9 +33,70 @@ async function registerPush(phone=''){
 }
 function SafeImage({src,alt,className='',fallback=FALLBACK_IMAGE}){const [failed,setFailed]=useState(false);const isBrand=(src||'').includes('cana-logo');return <img className={className} src={failed?fallback:src||fallback} alt={alt||''} onError={()=>{if(!failed)setFailed(true)}} loading={isBrand?'eager':'lazy'} decoding="async" fetchPriority={isBrand?'high':'auto'}/>}
 
+
+function InstallPrompt({onClose,onInstall,onNotify,canInstall,ios}) {
+ return <div className="install-overlay" role="dialog" aria-modal="true" aria-labelledby="cana-install-title" onClick={onClose}>
+  <section className="install-card" onClick={e=>e.stopPropagation()}>
+   <button className="install-close" aria-label="Fermer" onClick={onClose}><X size={18}/></button>
+   <div className="install-logo-wrap"><SafeImage src={CANA_LOGO} alt="Logo Les Délices de CANA" fallback={CANA_LOGO}/></div>
+   <span className="install-eyebrow">VOTRE RESTAURANT, À PORTÉE DE MAIN</span>
+   <h2 id="cana-install-title">Les Délices de CANA</h2>
+   <p>Retrouvez le menu du jour et recevez les nouveautés dès leur publication.</p>
+   <button className="install-primary" onClick={onInstall}><span className="install-pulse"><span/></span>{canInstall?'Installer l’application':ios?'Ajouter à l’écran d’accueil':'Découvrir l’installation'}</button>
+   <button className="install-secondary" onClick={onNotify}>Activer les notifications du menu</button>
+   <button className="install-later" onClick={onClose}>Plus tard</button>
+   {ios&&<small className="install-ios-hint">Sur iPhone : touchez Partager, puis « Sur l’écran d’accueil ».</small>}
+  </section>
+ </div>
+}
+
 function ClientApp(){
  const [items,setItems]=useState([]),[loading,setLoading]=useState(true),[menuError,setMenuError]=useState(''),[category,setCategory]=useState('Tous'),[selected,setSelected]=useState(null),[reservationOpen,setReservationOpen]=useState(false),[customOpen,setCustomOpen]=useState(false),[lookup,setLookup]=useState(false),[phone,setPhone]=useState(''),[history,setHistory]=useState(null),[status,setStatus]=useState(''),[siteSettings,setSiteSettings]=useState({contact_phone:'',contact_email:'',address:'',latitude:null,longitude:null});
+ const [installPrompt,setInstallPrompt]=useState(null),[showInstall,setShowInstall]=useState(false),[pushState,setPushState]=useState(''),[iosInstall,setIosInstall]=useState(false);
  useEffect(()=>{fetch('/api/cana-settings').then(r=>r.ok?r.json():null).then(v=>{if(v)setSiteSettings(v)}).catch(()=>{});let active=true;try{const cached=localStorage.getItem(menuCacheKey);if(cached){const parsed=JSON.parse(cached);if(Array.isArray(parsed)){setItems(parsed);setLoading(false)}}}catch{}loadMenu(active);return()=>{active=false}},[]);
+ useEffect(()=>{
+  let active=true;
+  const day=new Date().toLocaleDateString('en-CA',{timeZone:'Africa/Abidjan'});
+  const installed=()=>window.matchMedia('(display-mode: standalone)').matches||window.matchMedia('(display-mode: fullscreen)').matches||navigator.standalone===true;
+  const rememberInstalled=()=>{try{localStorage.setItem('cana_pwa_installed','1');localStorage.removeItem('cana_install_prompt_day')}catch{}setShowInstall(false)};
+  if(installed())rememberInstalled();
+  const onBeforeInstall=e=>{e.preventDefault();setInstallPrompt(e)};
+  const onInstalled=()=>{rememberInstalled();setInstallPrompt(null)};
+  window.addEventListener('beforeinstallprompt',onBeforeInstall);window.addEventListener('appinstalled',onInstalled);
+  setIosInstall(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!installed());
+  (async()=>{
+   let detected=installed();
+   try{if(!detected&&navigator.getInstalledRelatedApps){const apps=await navigator.getInstalledRelatedApps();detected=Array.isArray(apps)&&apps.length>0}}catch{}
+   if(detected){rememberInstalled();return}
+   let wasInstalled=false,shownDay='';
+   try{wasInstalled=localStorage.getItem('cana_pwa_installed')==='1';shownDay=localStorage.getItem('cana_install_prompt_day')||''}catch{}
+   if(!wasInstalled&&shownDay!==day){window.setTimeout(()=>{if(active){setShowInstall(true);try{localStorage.setItem('cana_install_prompt_day',day)}catch{}}},1100)}
+  })();
+  return()=>{active=false;window.removeEventListener('beforeinstallprompt',onBeforeInstall);window.removeEventListener('appinstalled',onInstalled)};
+ },[]);
+ async function installApp(){
+  if(installPrompt){try{await installPrompt.prompt();const choice=await installPrompt.userChoice;if(choice?.outcome==='accepted'){try{localStorage.setItem('cana_pwa_installed','1')}catch{}setShowInstall(false)}setInstallPrompt(null)}catch{setPushState("L’installation n’a pas pu démarrer. Utilisez le menu de votre navigateur.")}}
+  else if(iosInstall){setPushState('Sur iPhone : ouvrez Partager, puis « Sur l’écran d’accueil ».');}
+  else{setPushState('Dans le menu de votre navigateur, choisissez « Installer l’application » ou « Ajouter à l’écran d’accueil ».');}
+ }
+ async function enableMenuNotifications(){
+  setPushState('');
+  try{
+   if(!('serviceWorker' in navigator)||!('PushManager' in window)||!('Notification' in window)){setPushState('Les notifications push ne sont pas prises en charge par ce navigateur.');return}
+   const keyData=await api('push_public_key',{}),vapid=keyData?.public_key;
+   if(!vapid){setPushState('Les notifications ne sont pas encore configurées.');return}
+   const permission=Notification.permission==='granted'?'granted':await Notification.requestPermission();
+   if(permission!=='granted'){setPushState('Autorisez les notifications dans les réglages du navigateur pour recevoir les menus.');return}
+   const reg=await navigator.serviceWorker.ready;let sub=await reg.pushManager.getSubscription();
+   if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64ToBytes(vapid)});
+   const response=await fetch('/api/register-push',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({subscription:sub.toJSON()})});
+   const result=await response.json().catch(()=>({}));
+   if(!response.ok)throw new Error(result.error||'Inscription aux notifications impossible.');
+   setPushState('Notifications activées : vous serez informé des nouveaux menus, même lorsque l’application est fermée.');
+   setShowInstall(false);
+  }catch(e){setPushState(e.message||'Impossible d’activer les notifications pour le moment.')}
+ }
+
  async function loadMenu(active=true){setMenuError('');try{const data=await api('public_menu');const menu=Array.isArray(data)?data.map(x=>({...x,category:x.category||'Plats'})):[];if(!active)return;setItems(menu);setLoading(false);try{localStorage.setItem(menuCacheKey,JSON.stringify(menu))}catch{}}catch(err){if(!active)return;setMenuError(err.message||'Impossible de charger le menu. Réessayez.');setItems([]);setLoading(false)}}
  function openReservation(dish=null){setStatus('');setSelected(dish);setReservationOpen(true)}
  async function reserve(e){e.preventDefault();setStatus('');const form=e.currentTarget;const fd=new FormData(form);const chosen=fd.get('dish_id')||selected?.dish_id||'';const p={full_name:fd.get('full_name'),phone:fd.get('phone'),reservation_date:fd.get('date'),reservation_time:fd.get('time')||'12:00',dish_count:Number(fd.get('dish_count')),notes:fd.get('notes'),dish_id:chosen||null};try{await api('public_reserve',p);setStatus('success');form.reset();registerPush(p.phone)}catch(err){setStatus(err.message)}}
@@ -54,6 +115,8 @@ function ClientApp(){
   {selected&&!reservationOpen&&<div className="overlay" onClick={()=>setSelected(null)}><div className="product-modal" onClick={e=>e.stopPropagation()}><button className="close" onClick={()=>setSelected(null)}><X/></button><div className="modal-image"><SafeImage src={imageFor(selected)} alt={selected.name}/></div><span className="kicker">{selected.category||'Plats'}</span><h2>{selected.name}</h2><p>{selected.description}</p><strong>{money(selected.price)}</strong><button className="btn dark full" onClick={()=>openReservation(selected)}>Réserver ce plat</button></div></div>}
   {reservationOpen&&<div className="overlay" onClick={()=>{setReservationOpen(false);setStatus('')}}><div className="booking-modal" onClick={e=>e.stopPropagation()}><button className="close" onClick={()=>{setReservationOpen(false);setStatus('')}}><X/></button><span className="kicker">Réservation</span><h2>Réserver</h2>{status==='success'?<div className="reservation-success"><CheckCircle2 size={42}/><h3>Demande enregistrée</h3><p>Votre demande de réservation a bien été transmise au restaurant.</p><button className="btn dark full" onClick={()=>{setReservationOpen(false);setStatus('')}}>Fermer</button></div>:<form className="booking-form" onSubmit={reserve}><label>Nom complet<input name="full_name" required placeholder="Votre nom et prénom"/></label><label>Téléphone<input name="phone" required inputMode="tel" placeholder="07 00 00 00 00"/></label><div className="form-two"><label>Jour<input name="date" type="date" required defaultValue={todayISO()}/></label><label>Heure souhaitée<input name="time" type="time" required/></label></div><label>Plat souhaité<select name="dish_id" defaultValue={selected?.dish_id||selected?.id||''}><option value="">Choisir un plat</option>{items.map(item=><option key={item.id} value={item.dish_id||item.id}>{item.name} — {money(item.price)}</option>)}</select></label><label>Nombre de plats<select name="dish_count" defaultValue="1">{[1,2,3,4,5,6,7,8,9,10].map(n=><option key={n} value={n}>{n}</option>)}</select></label><label>Précision (facultatif)<textarea name="notes" rows="3" maxLength="350" placeholder="Une précision pour l’équipe..."></textarea></label><button className="btn dark full">Confirmer ma réservation</button>{status&&status!=='success'&&<small className="error">{status}</small>}</form>}</div></div>}
   {customOpen&&<div className="overlay" onClick={()=>{setCustomOpen(false);setStatus('')}}><div className="booking-modal" onClick={e=>e.stopPropagation()}><button className="close" onClick={()=>{setCustomOpen(false);setStatus('')}}><X/></button><span className="kicker">Commande à l'avance</span><h2>Vous voulez un plat particulier</h2>{status==='success'?<div className="reservation-success"><CheckCircle2 size={42}/><h3>Demande envoyée</h3><p>Votre demande a bien été transmise à l'équipe.</p><button className="btn dark full" onClick={()=>{setCustomOpen(false);setStatus('')}}>Fermer</button></div>:<form className="booking-form" onSubmit={customRequest}><label>Nom et prénom<input name="full_name" required maxLength="120" placeholder="Votre nom et prénom"/></label><label>Contact<input name="phone" required inputMode="tel" maxLength="30" placeholder="Votre numéro de téléphone"/></label><label>Votre demande<textarea name="request_text" rows="6" required maxLength="350" placeholder="Décrivez le plat ou la préparation souhaitée (350 caractères maximum)."/></label><small className="field-hint">350 caractères maximum.</small><button className="btn dark full">Valider ma demande</button>{status&&status!=='success'&&<small className="error">{status}</small>}</form>}</div></div>}
+  {showInstall&&<InstallPrompt onClose={()=>setShowInstall(false)} onInstall={installApp} onNotify={enableMenuNotifications} canInstall={!!installPrompt} ios={iosInstall}/>}
+  {pushState&&<div className="push-feedback" role="status"><span>{pushState}</span><button onClick={()=>setPushState('')} aria-label="Fermer"><X size={16}/></button></div>}
   {lookup&&<div className="overlay" onClick={()=>setLookup(false)}><div className="lookup" onClick={e=>e.stopPropagation()}><button className="close" onClick={()=>setLookup(false)}><X/></button><span className="kicker">Espace client</span><h2>Ma réservation</h2>{!history?<form onSubmit={find}><p>Entrez le numéro utilisé lors de la réservation.</p><label>Téléphone<input value={phone} onChange={e=>setPhone(e.target.value)} required inputMode="tel"/></label><button className="btn dark full">Rechercher</button>{status&&<small className="error">{status}</small>}</form>:<div className="history">{history.length?history.map(r=><div className="history-item" key={r.id}><div><b>{r.dish_name||'Commande particulière'}</b>{r.notes&&<span>{r.notes}</span>}<span>{r.reservation_date} · {String(r.reservation_time).slice(0,5)} · {r.dish_count} plat{r.dish_count>1?'s':''}</span><em className={'badge '+r.status}>{r.status}</em></div>{['pending','confirmed'].includes(r.status)&&<button className="cancel" onClick={()=>cancel(r.id)}>Annuler</button>}</div>):<p>Aucune réservation trouvée pour ce numéro.</p>}{status&&<small className="error">{status}</small>}</div>}</div></div>}
  </div>
 }
