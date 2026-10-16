@@ -28,7 +28,7 @@
   "crons": [
     {
       "path": "/api/publish-notifications",
-      "schedule": "10 6 * * *"
+      "schedule": "0 * * * *"
     }
   ]
 }
