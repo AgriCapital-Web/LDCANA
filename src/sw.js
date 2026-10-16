@@ -1,7 +1,7 @@
 import { precacheAndRoute } from 'workbox-precaching';
 
 // Keep the service worker for push notifications, but do not cache app assets or API data.
-precacheAndRoute([]);
+precacheAndRoute(self.__WB_MANIFEST.filter(() => false));
 
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
