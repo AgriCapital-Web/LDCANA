@@ -255,3 +255,26 @@ img{max-width:100%}
 .menu-summary-button .badge{flex:0 0 auto}
 .admin-stack>.admin-card .card-head>div{min-width:0}
 @media(max-width:760px){.menu-admin-card{padding:13px}.menu-summary-button{gap:8px}.menu-summary-copy h2{font-size:1rem}.menu-summary-copy>span:last-child{font-size:.75rem}.menu-editor-body{padding-top:12px}.menu-summary-button .badge{font-size:10px;padding:4px 6px}.menu-chevron{width:17px;height:17px}}
+
+
+/* Final unclipped brand mark and compact clickable dish rows */
+.site-header{overflow:visible!important;isolation:isolate}
+.site-header .brand{position:relative;z-index:100;overflow:visible!important;flex:0 0 auto;align-self:center;display:flex;align-items:center;justify-content:center}
+.site-header .brand img{position:relative;z-index:101;display:block;width:auto!important;height:auto!important;max-width:min(220px,34vw);max-height:68px;object-fit:contain!important;object-position:center!important;overflow:visible!important;clip-path:none!important;transform:none}
+.site footer{position:relative;isolation:isolate;overflow:visible!important}
+.site footer img{position:relative;z-index:101;clip-path:none!important}
+.admin-brand-row{position:relative;z-index:101;overflow:visible!important}
+.admin-brand-row img{position:relative;z-index:102;object-fit:contain!important;overflow:visible!important;clip-path:none!important}
+.admin-login-inner>img{position:relative;z-index:102;overflow:visible!important}
+.dish-collapsible-list{display:grid;gap:8px}
+.dish-catalog-item{min-width:0;border:1px solid #eadfd2;border-radius:12px;background:#fffdf9;overflow:visible}
+.dish-catalog-summary{display:flex;align-items:center;gap:12px;width:100%;min-width:0;padding:9px 12px;border:0;border-radius:12px;background:transparent;color:inherit;text-align:left;cursor:pointer}
+.dish-catalog-thumb{display:grid;place-items:center;flex:0 0 56px;width:56px;height:48px;border-radius:8px;overflow:hidden;background:#f4e9dc;color:#8a6349}
+.dish-catalog-thumb img{display:block;width:100%;height:100%;object-fit:cover}
+.dish-catalog-name{flex:1;min-width:0;font-weight:800;overflow-wrap:anywhere}
+.dish-editor-form{display:grid;gap:12px;padding:14px;border-top:1px solid #eadfd2}
+.dish-editor-form>label{display:grid;gap:6px;min-width:0;font-weight:750;color:#755c4a}
+.dish-editor-form input:not([type=file]),.dish-editor-form textarea,.dish-editor-form select{width:100%;min-width:0;max-width:100%;padding:10px 11px;border:1px solid #dfcdbc;border-radius:9px;background:#fff;color:#3a2117;font-size:16px}
+.dish-editor-form .preview{display:block;width:min(100%,260px);max-height:180px;object-fit:contain}
+.dish-editor-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+@media(max-width:760px){.dish-catalog-summary{gap:9px;padding:8px}.dish-catalog-thumb{flex-basis:48px;width:48px;height:44px}.dish-editor-form{padding:11px;gap:10px}}
