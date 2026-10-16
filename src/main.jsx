@@ -11,7 +11,6 @@ const money=v=>new Intl.NumberFormat('fr-FR').format(Number(v)||0)+' FCFA';
 const todayISO=()=>new Date().toLocaleDateString('en-CA',{timeZone:'Africa/Abidjan'});
 const imageFor=item=>item?.image_url||FALLBACK_IMAGE;
 const sessionKey='cana_admin_session';
-const menuCacheKey='cana_public_menu_v1';
 const getSession=()=>localStorage.getItem(sessionKey)||'';
 async function api(action,payload={},session=getSession()){
  const res=await fetch(API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({p_action:action,p_payload:payload,p_session:session||null})});
@@ -53,7 +52,7 @@ function InstallPrompt({onClose,onInstall,onNotify,canInstall,ios}) {
 function ClientApp(){
  const [items,setItems]=useState([]),[loading,setLoading]=useState(true),[menuError,setMenuError]=useState(''),[category,setCategory]=useState('Tous'),[selected,setSelected]=useState(null),[reservationOpen,setReservationOpen]=useState(false),[customOpen,setCustomOpen]=useState(false),[lookup,setLookup]=useState(false),[phone,setPhone]=useState(''),[history,setHistory]=useState(null),[status,setStatus]=useState(''),[siteSettings,setSiteSettings]=useState({contact_phone:'',contact_email:'',address:'',latitude:null,longitude:null});
  const [installPrompt,setInstallPrompt]=useState(null),[showInstall,setShowInstall]=useState(false),[pushState,setPushState]=useState(''),[iosInstall,setIosInstall]=useState(false);
- useEffect(()=>{fetch('/api/cana-settings').then(r=>r.ok?r.json():null).then(v=>{if(v)setSiteSettings(v)}).catch(()=>{});let active=true;try{const cached=localStorage.getItem(menuCacheKey);if(cached){const parsed=JSON.parse(cached);if(Array.isArray(parsed)){setItems(parsed);setLoading(false)}}}catch{}loadMenu(active);return()=>{active=false}},[]);
+ useEffect(()=>{fetch('/api/cana-settings',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(v=>{if(v)setSiteSettings(v)}).catch(()=>{});let active=true;loadMenu(active);return()=>{active=false}},[]);
  useEffect(()=>{
   let active=true;
   const day=new Date().toLocaleDateString('en-CA',{timeZone:'Africa/Abidjan'});
@@ -97,7 +96,7 @@ function ClientApp(){
   }catch(e){setPushState(e.message||'Impossible d’activer les notifications pour le moment.')}
  }
 
- async function loadMenu(active=true){setMenuError('');try{const data=await api('public_menu');const menu=Array.isArray(data)?data.map(x=>({...x,category:x.category||'Plats'})):[];if(!active)return;setItems(menu);setLoading(false);try{localStorage.setItem(menuCacheKey,JSON.stringify(menu))}catch{}}catch(err){if(!active)return;setMenuError(err.message||'Impossible de charger le menu. Réessayez.');setItems([]);setLoading(false)}}
+ async function loadMenu(active=true){setMenuError('');try{const data=await api('public_menu');const menu=Array.isArray(data)?data.map(x=>({...x,category:x.category||'Plats'})):[];if(!active)return;setItems(menu);setLoading(false)}catch(err){if(!active)return;setMenuError(err.message||'Impossible de charger le menu. Réessayez.');setItems([]);setLoading(false)}}
  function openReservation(dish=null){setStatus('');setSelected(dish);setReservationOpen(true)}
  async function reserve(e){e.preventDefault();setStatus('');const form=e.currentTarget;const fd=new FormData(form);const chosen=fd.get('dish_id')||selected?.dish_id||'';const p={full_name:fd.get('full_name'),phone:fd.get('phone'),reservation_date:fd.get('date'),reservation_time:fd.get('time')||'12:00',dish_count:Number(fd.get('dish_count')),notes:fd.get('notes'),dish_id:chosen||null};try{await api('public_reserve',p);setStatus('success');form.reset();registerPush(p.phone)}catch(err){setStatus(err.message)}}
  async function customRequest(e){e.preventDefault();setStatus('');const form=e.currentTarget;const fd=new FormData(form);const p={full_name:fd.get('full_name'),phone:fd.get('phone'),request_text:fd.get('request_text')};try{await api('custom_request',p);setStatus('success');form.reset();registerPush(p.phone)}catch(err){setStatus(err.message)}}
