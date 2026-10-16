@@ -308,3 +308,36 @@ img{max-width:100%}
 @keyframes canaPopupIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 @media(max-width:380px){.install-card{padding:21px 16px 14px;border-radius:22px}.install-logo-wrap{width:70px;height:70px}.install-card p{font-size:12px;margin-bottom:14px}.install-primary,.install-secondary{min-height:40px;font-size:12px}}
 @media(prefers-reduced-motion:reduce){.install-overlay,.install-card,.install-pulse{animation:none}}
+
+/* Reservation form: compact fields, no unnecessary scroll on mobile */
+.booking-modal{width:min(490px,100%);max-height:min(92dvh,760px);padding:20px;overscroll-behavior:contain}
+.booking-modal>.kicker{display:block;padding-right:35px}
+.booking-modal h2{font-size:clamp(24px,5vw,30px);margin:4px 0 8px}
+.booking-form{margin-top:10px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 10px}
+.booking-form>label{min-width:0;margin:0;gap:4px;font-size:12px}
+.booking-form>label:nth-of-type(1),.booking-form>label:nth-of-type(2),.booking-form>label:nth-of-type(4),.booking-form>label:nth-of-type(6){grid-column:1/-1}
+.booking-form .form-two{grid-column:1/-1;gap:8px}
+.booking-form input,.booking-form select,.booking-form textarea{min-width:0;min-height:38px;padding:8px 10px;border-radius:9px;font-size:16px;line-height:1.2}
+.booking-form textarea{min-height:52px;max-height:72px;resize:vertical}
+.booking-form .btn,.booking-form>.error{grid-column:1/-1}
+.booking-form .btn{min-height:42px}
+@media(max-width:520px){
+ .overlay{padding:8px}
+ .booking-modal{width:min(430px,100%);max-height:calc(100dvh - 16px);padding:16px 14px;border-radius:18px}
+ .booking-modal h2{font-size:24px;margin-bottom:5px}
+ .booking-form{margin-top:8px;gap:7px 8px}
+ .booking-form>label{font-size:11px;gap:3px}
+ .booking-form input,.booking-form select,.booking-form textarea{min-height:35px;padding:7px 9px}
+ .booking-form textarea{min-height:42px;max-height:56px}
+ .booking-form .btn{min-height:39px;padding:9px 12px;font-size:13px}
+ .booking-modal .close{width:30px;height:30px;right:8px;top:8px}
+ .form-two{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-height:720px) and (max-width:520px){
+ .booking-modal{padding:12px}
+ .booking-form{gap:5px 8px}
+ .booking-form>label{font-size:10px}
+ .booking-form input,.booking-form select{min-height:32px;padding:6px 8px}
+ .booking-form textarea{min-height:36px;max-height:42px}
+ .booking-modal h2{font-size:22px}
+}
