@@ -284,3 +284,27 @@ img{max-width:100%}
 .brand,.brand img,.site footer img,.admin-brand-row,.admin-brand-row img,.admin-login-inner>img,.admin aside>img,.settings-logo-preview,.settings-logo-preview img{background:transparent!important;background-color:transparent!important;box-shadow:none!important;}
 .brand::before,.brand::after,.admin-brand-row::before,.admin-brand-row::after{content:none!important;display:none!important;}
 .brand img,.site footer img,.admin-brand-row img,.admin-login-inner>img,.admin aside>img,.settings-logo-preview img{object-fit:contain!important;object-position:center!important;mix-blend-mode:normal!important;filter:none!important;}
+
+/* PWA installation: compact, branded, responsive and safe-area aware */
+.install-overlay{position:fixed;inset:0;z-index:250;background:rgba(37,22,15,.56);backdrop-filter:blur(7px);display:grid;place-items:center;padding:16px max(16px,env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));animation:canaFadeIn .22s ease-out}
+.install-card{position:relative;width:min(360px,100%);max-height:min(88dvh,600px);overflow:auto;padding:24px 21px 18px;border:1px solid #f0dfcc;border-radius:26px;background:linear-gradient(155deg,#fffdf8 0%,#fff5e8 100%);box-shadow:0 24px 80px #1d100b42;text-align:center;color:#402418;animation:canaPopupIn .3s cubic-bezier(.2,.8,.2,1)}
+.install-close{position:absolute;right:11px;top:11px;width:32px;height:32px;border:0;border-radius:50%;display:grid;place-items:center;background:#f4e6d6;color:#6b4934}
+.install-logo-wrap{width:82px;height:82px;margin:0 auto 12px;border-radius:22px;background:#fff;box-shadow:0 6px 20px #3b211716;display:grid;place-items:center;overflow:hidden}
+.install-logo-wrap img{display:block;width:100%;height:100%;padding:7px;object-fit:contain}
+.install-eyebrow{display:block;font-size:9px;line-height:1.4;letter-spacing:.13em;font-weight:900;color:#a65c20}
+.install-card h2{font-family:Georgia,'Times New Roman',serif;font-size:clamp(22px,6vw,27px);line-height:1.1;letter-spacing:-.02em;margin:7px 0 9px}
+.install-card p{max-width:290px;margin:0 auto 18px;font-size:13px;line-height:1.5;color:#765e4f}
+.install-primary,.install-secondary,.install-later{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:43px;border-radius:13px;padding:10px 12px;font-size:13px;font-weight:850;line-height:1.25}
+.install-primary{border:1px solid #a95117;background:linear-gradient(120deg,#a94d15,#d57c2c);color:white;box-shadow:0 7px 18px #b65e2629}
+.install-secondary{margin-top:8px;border:1px solid #e6d3bd;background:#fffaf4;color:#70452b}
+.install-later{margin-top:4px;min-height:34px;border:0;background:transparent;color:#8a7565;font-weight:700}
+.install-pulse{width:9px;height:9px;display:inline-grid;place-items:center;border-radius:50%;background:#fff;animation:canaPulse 1.3s ease-in-out infinite;flex:0 0 auto}
+.install-pulse span{width:4px;height:4px;border-radius:50%;background:#a95117}
+.install-ios-hint{display:block;margin-top:8px;color:#8a7565;font-size:11px;line-height:1.4}
+.push-feedback{position:fixed;z-index:260;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(440px,calc(100% - 28px));display:flex;align-items:flex-start;gap:12px;padding:12px 13px;border:1px solid #ead8c4;border-radius:15px;background:#fffaf4;color:#543729;box-shadow:0 12px 40px #30170e25;font-size:12px;line-height:1.45}
+.push-feedback button{flex:0 0 auto;display:grid;place-items:center;border:0;background:transparent;color:#765e4f}
+@keyframes canaPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 #fff8}50%{transform:scale(1.13);box-shadow:0 0 0 6px #ffffff36}}
+@keyframes canaFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes canaPopupIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:380px){.install-card{padding:21px 16px 14px;border-radius:22px}.install-logo-wrap{width:70px;height:70px}.install-card p{font-size:12px;margin-bottom:14px}.install-primary,.install-secondary{min-height:40px;font-size:12px}}
+@media(prefers-reduced-motion:reduce){.install-overlay,.install-card,.install-pulse{animation:none}}
