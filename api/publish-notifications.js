@@ -6,7 +6,7 @@ const json=(res,status,data)=>res.status(status).setHeader('Cache-Control','no-s
 export default async function handler(req,res){
  if(!process.env.DATABASE_URL)return json(res,500,{error:'Base de données non configurée.'});
  const cron=req.method==='GET';
- if(cron&&process.env.CRON_SECRET&&req.headers.authorization!==`Bearer ${process.env.CRON_SECRET}`)return json(res,401,{error:'Non autorisé.'});
+ if(cron&&(!process.env.CRON_SECRET||req.headers.authorization!==`Bearer ${process.env.CRON_SECRET}`))return json(res,401,{error:'CRON_SECRET absent ou non valide.'});
  if(!cron&&req.method!=='POST')return json(res,405,{error:'Méthode non autorisée.'});
  try{
   if(!cron){
