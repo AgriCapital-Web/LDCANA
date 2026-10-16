@@ -241,3 +241,17 @@ img{max-width:100%}
 .menu-item-image-preview{display:flex;align-items:center;justify-content:flex-start;min-width:0;margin-top:8px}
 .menu-item-image-preview img{display:block;width:min(100%,220px);height:115px;object-fit:cover;border:1px solid #eadfd2;border-radius:10px;background:#fff}
 @media(max-width:760px){.menu-item-image-preview img{width:100%;height:auto;max-height:190px;aspect-ratio:16/9;object-fit:cover}.admin-card input[type="file"]{font-size:13px;padding:9px}}
+
+
+/* Compact admin lists: reveal editors only on demand */
+.menu-summary-button{display:flex;width:100%;min-width:0;align-items:center;gap:12px;padding:0;border:0;background:transparent;text-align:left;color:inherit;cursor:pointer}
+.menu-summary-copy{flex:1;min-width:0;display:grid;gap:4px}
+.menu-summary-copy h2{margin:0;font-size:clamp(1rem,2vw,1.25rem);overflow-wrap:anywhere}
+.menu-summary-copy>span:last-child{font-size:.82rem;color:#806b5e}
+.menu-chevron{flex:0 0 auto;color:#8b6549;transition:transform .18s ease}
+.menu-chevron.is-open{transform:rotate(90deg)}
+.menu-editor-body{padding-top:16px}
+.menu-admin-card{padding:16px 18px}
+.menu-summary-button .badge{flex:0 0 auto}
+.admin-stack>.admin-card .card-head>div{min-width:0}
+@media(max-width:760px){.menu-admin-card{padding:13px}.menu-summary-button{gap:8px}.menu-summary-copy h2{font-size:1rem}.menu-summary-copy>span:last-child{font-size:.75rem}.menu-editor-body{padding-top:12px}.menu-summary-button .badge{font-size:10px;padding:4px 6px}.menu-chevron{width:17px;height:17px}}
