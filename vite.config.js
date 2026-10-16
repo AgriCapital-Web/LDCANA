@@ -13,7 +13,7 @@ export default defineConfig({
    includeAssets:[],
    manifest:{
     name:'Les Délices de CANA',
-    short_name:'CANA',
+    short_name:'Délices de CANA',
     description:'La carte et les réservations des Délices de CANA.',
     theme_color:'#FBF7F0',
     background_color:'#FBF7F0',
