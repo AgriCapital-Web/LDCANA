@@ -7,8 +7,8 @@ export default async function handler(req,res){
   const row=rows[0];
   if(row?.logo_data){
    const match=row.logo_data.match(/^data:(image\/(?:png|jpeg|webp|svg\+xml));base64,([\s\S]+)$/);
-   if(match){const data=Buffer.from(match[2],'base64');res.setHeader('Content-Type',match[1]);res.setHeader('Cache-Control','no-store');res.setHeader('ETag','"cana-'+Buffer.from(String(row.updated_at)).toString('hex')+'"');return res.status(200).send(data);}
+   if(match){const data=Buffer.from(match[2],'base64');res.setHeader('Content-Type',match[1]);res.setHeader('Cache-Control','no-store, no-cache, must-revalidate, max-age=0');res.setHeader('ETag','"cana-'+Buffer.from(String(row.updated_at)).toString('hex')+'"');return res.status(200).send(data);}
   }
-  res.setHeader('Cache-Control','no-store');return res.redirect(302,'/brand/cana-logo.png');
+  res.setHeader('Cache-Control','no-store, no-cache, must-revalidate, max-age=0');return res.redirect(302,'/brand/cana-logo.png');
  }catch(e){console.error(e);return res.redirect(302,'/brand/cana-logo.png')}
 }
