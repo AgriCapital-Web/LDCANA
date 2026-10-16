@@ -19,16 +19,17 @@ async function api(action,payload={},session=getSession()){
  return Array.isArray(data)&&data.length===1?data[0]:data;
 }
 const b64ToBytes=v=>{const pad='='.repeat((4-v.length%4)%4),b=atob((v+pad).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from([...b].map(c=>c.charCodeAt(0)))};
-async function registerPush(phone=''){
- try{
-  if(!('serviceWorker' in navigator)||!('PushManager' in window)||!('Notification' in window))return;
-  const keyData=await api('push_public_key',{}); const vapid=keyData?.public_key;if(!vapid)return;
-  const permission=Notification.permission==='granted'?'granted':await Notification.requestPermission();if(permission!=='granted')return;
-  const reg=await navigator.serviceWorker.ready;let sub=await reg.pushManager.getSubscription();
-  if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64ToBytes(vapid)});
-  const json=sub.toJSON();
-  await api('register_push',{phone:phone||null,endpoint:sub.endpoint,p256dh:json.keys?.p256dh||'',auth:json.keys?.auth||''});
- }catch{}
+async function registerPush(){
+ if(!('serviceWorker' in navigator)||!('PushManager' in window)||!('Notification' in window)||Notification.permission!=='granted')return false;
+ const keyData=await api('push_public_key',{}),vapid=keyData?.public_key;
+ if(!vapid)throw new Error('Clé de notification absente du serveur.');
+ const reg=await navigator.serviceWorker.ready;
+ let sub=await reg.pushManager.getSubscription();
+ if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64ToBytes(vapid)});
+ const response=await fetch('/api/register-push',{method:'POST',headers:{'content-type':'application/json'},cache:'no-store',body:JSON.stringify({subscription:sub.toJSON()})});
+ const result=await response.json().catch(()=>({}));
+ if(!response.ok)throw new Error(result.error||'Enregistrement des notifications impossible.');
+ return true;
 }
 function SafeImage({src,alt,className='',fallback=FALLBACK_IMAGE}){const [failed,setFailed]=useState(false);const isBrand=(src||'').includes('cana-logo');return <img className={className} src={failed?fallback:src||fallback} alt={alt||''} onError={()=>{if(!failed)setFailed(true)}} loading={isBrand?'eager':'lazy'} decoding="async" fetchPriority={isBrand?'high':'auto'}/>}
 
@@ -52,7 +53,7 @@ function InstallPrompt({onClose,onInstall,onNotify,canInstall,ios}) {
 function ClientApp(){
  const [items,setItems]=useState([]),[loading,setLoading]=useState(true),[menuError,setMenuError]=useState(''),[category,setCategory]=useState('Tous'),[selected,setSelected]=useState(null),[reservationOpen,setReservationOpen]=useState(false),[customOpen,setCustomOpen]=useState(false),[lookup,setLookup]=useState(false),[phone,setPhone]=useState(''),[history,setHistory]=useState(null),[status,setStatus]=useState(''),[siteSettings,setSiteSettings]=useState({contact_phone:'',contact_email:'',address:'',latitude:null,longitude:null});
  const [installPrompt,setInstallPrompt]=useState(null),[showInstall,setShowInstall]=useState(false),[pushState,setPushState]=useState(''),[iosInstall,setIosInstall]=useState(false);
- useEffect(()=>{fetch('/api/cana-settings',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(v=>{if(v)setSiteSettings(v)}).catch(()=>{});let active=true;loadMenu(active);return()=>{active=false}},[]);
+ useEffect(()=>{fetch('/api/cana-settings',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(v=>{if(v)setSiteSettings(v)}).catch(()=>{});let active=true;loadMenu(active);if('Notification' in window&&Notification.permission==='granted')registerPush().catch(e=>console.error('CANA push subscription refresh failed',e));return()=>{active=false}},[]);
  useEffect(()=>{
   let active=true;
   const day=new Date().toLocaleDateString('en-CA',{timeZone:'Africa/Abidjan'});
@@ -84,13 +85,7 @@ function ClientApp(){
    if(!('serviceWorker' in navigator)||!('PushManager' in window)||!('Notification' in window)){setPushState('Les notifications push ne sont pas prises en charge par ce navigateur.');return}
    const permission=Notification.permission==='granted'?'granted':await Notification.requestPermission();
    if(permission!=='granted'){setPushState('Autorisez les notifications dans les réglages du navigateur pour recevoir les menus.');return}
-   const keyData=await api('push_public_key',{}),vapid=keyData?.public_key;
-   if(!vapid){setPushState('Les notifications ne sont pas encore configurées.');return}
-   const reg=await navigator.serviceWorker.ready;let sub=await reg.pushManager.getSubscription();
-   if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64ToBytes(vapid)});
-   const response=await fetch('/api/register-push',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({subscription:sub.toJSON()})});
-   const result=await response.json().catch(()=>({}));
-   if(!response.ok)throw new Error(result.error||'Inscription aux notifications impossible.');
+   await registerPush();
    setPushState('Notifications activées : vous serez informé des nouveaux menus, même lorsque l’application est fermée.');
    setShowInstall(false);
   }catch(e){setPushState(e.message||'Impossible d’activer les notifications pour le moment.')}
