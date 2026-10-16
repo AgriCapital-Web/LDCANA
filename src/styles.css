@@ -278,3 +278,9 @@ img{max-width:100%}
 .dish-editor-form .preview{display:block;width:min(100%,260px);max-height:180px;object-fit:contain}
 .dish-editor-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 @media(max-width:760px){.dish-catalog-summary{gap:9px;padding:8px}.dish-catalog-thumb{flex-basis:48px;width:48px;height:44px}.dish-editor-form{padding:11px;gap:10px}}
+
+
+/* Logo: no artificial panel, fill, mask or background behind the transparent PNG */
+.brand,.brand img,.site footer img,.admin-brand-row,.admin-brand-row img,.admin-login-inner>img,.admin aside>img,.settings-logo-preview,.settings-logo-preview img{background:transparent!important;background-color:transparent!important;box-shadow:none!important;}
+.brand::before,.brand::after,.admin-brand-row::before,.admin-brand-row::after{content:none!important;display:none!important;}
+.brand img,.site footer img,.admin-brand-row img,.admin-login-inner>img,.admin aside>img,.settings-logo-preview img{object-fit:contain!important;object-position:center!important;mix-blend-mode:normal!important;filter:none!important;}
