@@ -234,3 +234,10 @@ img{max-width:100%}
  .admin aside button{font-size:9px}
  .admin aside button span{font-size:9px}
 }
+
+
+/* Admin image uploads: native file picker only, no manual image URLs */
+.admin-card input[type="file"]{display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;border:1px dashed #cbb39d;border-radius:10px;padding:10px;background:#fffaf4;color:#583a2b;font-size:14px}
+.menu-item-image-preview{display:flex;align-items:center;justify-content:flex-start;min-width:0;margin-top:8px}
+.menu-item-image-preview img{display:block;width:min(100%,220px);height:115px;object-fit:cover;border:1px solid #eadfd2;border-radius:10px;background:#fff}
+@media(max-width:760px){.menu-item-image-preview img{width:100%;height:auto;max-height:190px;aspect-ratio:16/9;object-fit:cover}.admin-card input[type="file"]{font-size:13px;padding:9px}}
