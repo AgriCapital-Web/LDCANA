@@ -83,10 +83,10 @@ function ClientApp(){
   setPushState('');
   try{
    if(!('serviceWorker' in navigator)||!('PushManager' in window)||!('Notification' in window)){setPushState('Les notifications push ne sont pas prises en charge par ce navigateur.');return}
-   const keyData=await api('push_public_key',{}),vapid=keyData?.public_key;
-   if(!vapid){setPushState('Les notifications ne sont pas encore configurées.');return}
    const permission=Notification.permission==='granted'?'granted':await Notification.requestPermission();
    if(permission!=='granted'){setPushState('Autorisez les notifications dans les réglages du navigateur pour recevoir les menus.');return}
+   const keyData=await api('push_public_key',{}),vapid=keyData?.public_key;
+   if(!vapid){setPushState('Les notifications ne sont pas encore configurées.');return}
    const reg=await navigator.serviceWorker.ready;let sub=await reg.pushManager.getSubscription();
    if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64ToBytes(vapid)});
    const response=await fetch('/api/register-push',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({subscription:sub.toJSON()})});
