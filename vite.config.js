@@ -21,6 +21,8 @@ export default defineConfig({
     lang:'fr',
     start_url:'/',
     scope:'/',
+    related_applications:[{platform:'webapp',url:'https://ldcana.vercel.app/manifest.webmanifest'}],
+    prefer_related_applications:false,
     icons:[
       {src:'/api/cana-logo',sizes:'any',purpose:'any'}
     ]
