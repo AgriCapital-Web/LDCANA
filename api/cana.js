@@ -18,7 +18,8 @@ export default async function handler(req, res) {
     return;
   }
   if (!process.env.DATABASE_URL) {
-    res.status(500).json({ error: 'DATABASE_URL is not configured on the server.' });
+    console.error('CANA API configuration error: DATABASE_URL is missing');
+    res.status(500).json({ error: 'Le service est temporairement indisponible. Veuillez réessayer plus tard ou contacter l’équipe Les Délices de CANA.' });
     return;
   }
   try {
@@ -34,6 +35,6 @@ export default async function handler(req, res) {
     res.status(200).json(rows[0]?.data ?? null);
   } catch (error) {
     console.error('CANA API error', error);
-    res.status(500).json({ error: error?.message || 'CANA API error' });
+    res.status(500).json({ error: 'Une difficulté technique empêche cette action pour le moment. Veuillez réessayer. Si le problème persiste, contactez l’équipe Les Délices de CANA.' });
   }
 }
