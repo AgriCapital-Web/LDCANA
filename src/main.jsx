@@ -15,7 +15,7 @@ const getSession=()=>localStorage.getItem(sessionKey)||'';
 async function api(action,payload={},session=getSession()){
  const res=await fetch(API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({p_action:action,p_payload:payload,p_session:session||null})});
  let data=null;try{data=await res.json()}catch{}
- if(!res.ok){const msg=data?.message||data?.error||data?.hint||`Erreur serveur (${res.status})`;throw new Error(msg)}
+ if(!res.ok){const raw=String(data?.message||data?.error||data?.hint||'');const technical=/database_url|postgres|sqlstate|neon|stack|exception|edge function|non-2xx|internal server|syntax error|relation .* does not exist/i.test(raw);const msg=technical?'Une difficulté technique empêche cette action pour le moment. Veuillez réessayer. Si le problème persiste, contactez l’équipe Les Délices de CANA.':(raw||'Cette action n’a pas pu aboutir. Veuillez réessayer.');throw new Error(msg)}
  return Array.isArray(data)&&data.length===1?data[0]:data;
 }
 const b64ToBytes=v=>{const pad='='.repeat((4-v.length%4)%4),b=atob((v+pad).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from([...b].map(c=>c.charCodeAt(0)))};
